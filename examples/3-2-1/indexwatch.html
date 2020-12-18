@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Vue.js 01 component example</title>
+  </head>
+  <body>
+    <div id="app">
+      {{ user.fullName }}
+    </div>
+
+    <script src="../../dist/vue.js"></script>
+    <script>
+      const vm = new Vue({
+        el: '#app',
+        data: {
+          user: {
+            firstName: '张',
+            lastName: '三',
+            fullName: ''
+          }
+        }
+      })
+
+      // vm.$watch('user.firstName',
+      //   function (newValue, oldValue) {
+      //     this.user.fullName = newValue + this.user.lastName
+      //   },{
+      //     immediate: true
+      //   }
+      // )
+
+      // vm.$watch('user.lastName',
+      //   function (newValue, oldValue) {
+      //     this.user.fullName = this.user.firstName + newValue
+      //   },{
+      //     immediate: true
+      //   }
+      // )
+
+      vm.$watch('user',
+        function (newValue, oldValue) {
+          this.user.fullName = newValue.firstName + newValue.lastName
+        },{
+          immediate: true,
+          deep: true
+        }
+      )
+
+    </script>
+  </body>
+</html>

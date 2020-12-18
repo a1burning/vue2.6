@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>compile</title>
+</head>
+<body>
+  <div id="app">
+    <h1>Vue<span>模板编译过程</span></h1>
+    <p>{{ msg }}</p>
+    <!-- 自定义组件，并添加了自定义事件，组件中没有处理这个事件 -->
+    <comp @myclick="handler"></comp>
+  </div>
+  <script src="../../dist/vue.js"></script>
+  <script>
+    // 全局组件comp
+    Vue.component('comp', {
+      template: '<div>I am a comp</div>'
+    })
+    // 创建vue实例
+    const vm = new Vue({
+      el: '#app',
+      data: {
+        msg: 'Hello compiler'
+      },
+      methods: {
+        handler () {
+          console.log('test')
+        }
+      }
+    })
+    // 编译生成的render函数
+    console.log(vm.$options.render)
+  </script>
+</body>
+</html>

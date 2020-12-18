@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Vue.js 01 component example</title>
+  </head>
+  <body>
+    <div id="app">
+      <!-- 设置ref属性将来可以获取到p标签 -->
+      <p ref="p1">{{ msg }}</p>
+    </div>
+
+    <script src="../../dist/vue.js"></script>
+    <script>
+      const vm = new Vue({
+        el: '#app',
+        data: {
+          msg: 'Hello nextTick',
+          name: 'name',
+          title: 'title'
+        },
+        mounted() {
+          // 这里修改了data中的值，当值改变的时候不会立即去更新DOM，这个更新是一个异步的过程，也就是说当这里数据变化的时候在下面立即获取标签上的内容是获取不到最新值的，如果想获得最新的值，就要调用$nextTick
+          this.msg = 'Hello world'
+          this.name = 'xm'
+          this.title = 'subTitle'
+          console.log(this.$refs.p1.textContent)
+          // 在$nextTick函数中，视图已经更新完毕，所以可以获取视图上的最新数据
+          this.$nextTick(() => {
+            console.log(this.$refs.p1.textContent)
+          })
+        }
+      })
+    </script>
+  </body>
+</html>

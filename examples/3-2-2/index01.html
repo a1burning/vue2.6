@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Vue.js 01 component example</title>
+  </head>
+  <body>
+    <div id="app">
+    </div>
+
+    <script src="../../dist/vue.runtime.js"></script>
+    <script>
+      const vm = new Vue({
+        el: '#app',
+        // 渲染函数render，参数h是一个函数，对应源码中的createElement
+        // h函数的作用是为了创建一个虚拟节点VNode，调用h函数的时候需要传入四个参数，最后一个参数需要看源码解释
+        // h(tag, data, children) 
+        // 第一个参数tag是一个标签的名称(字符串)，或者是组件的选项对象
+        // 第二个参数data是用来描述tag的，如果tag是标签，那么data可以是设置tag的属性，或者是其对应dom的元素属性，还可以注册事件
+        // 第三个参数children可以是字符串，设置标签中的内容，如果是数组就是设置标签中的子节点
+        // Vue和snabbdom类似，vue的支持组件和slots插槽
+        render (h) { 
+          // return h('h1', this.msg) 
+          // h1 DOM对象的属性
+          // return h('h1', { domProps: { innerHTML: this.msg } }) 
+          // attrs:标签属性
+          // return h('h1', { attrs: { id: 'title' } }, this.msg) 
+          const vnode = h(
+            'h1',
+            {
+              attrs: { id: 'title' }
+            },
+            this.msg 
+          )
+          // 返回结果是一个VNode对象
+          // 虽然属性很多，但是相对于真实DOM来说属性还是少了很多的
+          // 记住几个核心属性
+          /**
+           * children:子节点，如果第三个参数是字符串，那么会将其自动转化为VNode对象，描述一个文本节点
+           * data：调用h函数传来的选项
+           * elm：VNode转换成真实DOM之后，对应存储的真实DOM
+           * key：复用当前元素
+           * tag：h函数传入的第一个参数
+           * text
+           */
+          console.log(vnode) 
+          return vnode
+        },
+        data: {
+          msg: 'Hello Vue'
+        }
+      })
+    </script>
+  </body>
+</html>

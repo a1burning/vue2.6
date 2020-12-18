@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>compile</title>
+</head>
+<body>
+  <div id="app">
+  </div>
+  <script src="../../dist/vue.js"></script>
+  <script>
+    // 创建全局组件，返回了组件的构造函数
+    const comp = Vue.component('comp', {
+      template: '<div>I am a comp</div>'
+    })
+    const vm = new Vue({
+      el: '#app',
+      // 给h函数传递的组件的构造函数，通过h函数创建组件对应的vnode
+      render (h) {
+        return h(comp)
+      }
+    })
+  </script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Vue.js 01 component example</title>
+  </head>
+  <body>
+    <div id="app">
+      {{ reversedMessage }}
+      <hr>
+      {{ user.fullName }}
+    </div>
+
+    <script src="../../dist/vue.js"></script>
+    <script>
+      const vm = new Vue({
+        el: '#app',
+        data: {
+          message:'Hello Vue',
+          user: {
+            firstName: '张',
+            lastName: '三',
+            fullName: ''
+          },
+          count: 0
+        },
+        computed: {
+          reversedMessage: function () {
+            return this.message.split('').reverse().join('')
+          }
+        },
+        watch: {
+          // 这里不给user.firstName和lastName单独设置watcher，是因为没有办法配置立即执行immediate和深度监听deep
+          // 监听对象user，要提供handler，就是回调函数，还有配置立即执行immediate和深度监听deep
+          // 在侦听器里面，当数据变化的时候，还可以做异步处理这些更复杂的内容
+          'user': [{
+            handler: function (newValue, oldValue) {
+              this.user.fullName = this.user.firstName + this.user.lastName
+            },
+            deep: true,
+            immediate: true
+          }, {
+            handler: {
+              handler: {
+                handler: function (newValue, oldValue) {
+                  this.count++
+                },
+                deep: true,
+                immediate: true
+              }
+            }
+          }]
+        }
+      })
+    </script>
+  </body>
+</html>

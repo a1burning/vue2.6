@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Vue.js 01 component example</title>
+  </head>
+  <body>
+
+    <!-- demo root element -->
+    <div id="app">
+      {{ msg }}
+    </div>
+
+    <script src="../../dist/vue.js"></script>
+    <script>
+      // compiler
+      // 需要编译器，把 template 转换成 render 函数
+      const vm = new Vue({
+        el: '#app',
+        // template: '<h1>{{ msg }}</h1>',
+        // render(h) {
+        //   return h('h1', this.msg)
+        // },
+        data: {
+          msg: 'Hello Vue'
+        }
+      })
+    </script>
+  </body>
+</html>
