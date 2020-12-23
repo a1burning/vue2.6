@@ -20,6 +20,7 @@ export function installRenderHelpers (target: any) {
   // 转化成字符串的方法
   target._s = toString
   target._l = renderList
+  // 渲染插槽
   target._t = renderSlot
   target._q = looseEqual
   target._i = looseIndexOf

@@ -1,0 +1,31 @@
+# 名字
+name: GitHub Actions Build and Deploy Demo
+# 触发的条件 往master分支push的时候就会触发下面的任务
+on:
+  push:
+    branches:
+      - master
+# 工作的流程
+jobs:
+  build-and-deploy:
+    # 运行在一个临时的操作系统，其实是一个docker，在docker里面开启了一个乌班图系统(linux系统)
+    # 整个流程完成之后，系统就销毁了
+    runs-on: ubuntu-latest
+    steps:
+    # 第一个任务，将当前的项目checkout，克隆下来
+    # actions，markect里面有很多actions，这个是官方给的
+    - name: Checkout
+      uses: actions/checkout@master
+    # 别人写好的actions，可以到这个网站上搜索别人写好的actions，以及用法 https://github.com/marketplace/actions/deploy-to-github-pages
+    - name: Build and Deploy
+      uses: JamesIves/github-pages-deploy-action@master
+      # 环境变量
+      env:
+        # 访问仓库的tocken，刚才在开发者里面设置的
+        ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        # 创建新分支
+        BRANCH: gh-pages
+        # 打包之后的目录
+        FOLDER: dist
+        # 打包命令
+        BUILD_SCRIPT: npm install && npm run build

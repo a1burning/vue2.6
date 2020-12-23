@@ -193,11 +193,15 @@ const computedWatcherOptions = { lazy: true }
 
 function initComputed (vm: Component, computed: Object) {
   // $flow-disable-line
+  // 定义了一个私有属性，里面存储的是一个键值对的形式，键是计算属性的名字，值就是计算属性对应的function
   const watchers = vm._computedWatchers = Object.create(null)
   // computed properties are just getters during SSR
+  // 判断当前环境是否是服务端渲染的环境
   const isSSR = isServerRendering()
-  // 遍历所有属性
+  // 遍历用户定义的计算属性 computed：{ a: function () {}, b: { get: ..., set: ...}}
+  // 值可能是函数，也可能是对象
   for (const key in computed) {
+    // 获取计算属性的值
     const userDef = computed[key]
     // 判断是不是function，如果不是就调用其get方法
     const getter = typeof userDef === 'function' ? userDef : userDef.get
@@ -207,9 +211,10 @@ function initComputed (vm: Component, computed: Object) {
         vm
       )
     }
-
+    // 如果不是服务端渲染，就会创建一个watcher对象，并且记录到刚才的vm._computedWatchers变量中
     if (!isSSR) {
       // create internal watcher for the computed property.
+      // 第一个参数是Vue实例，第二个参数是计算属性对应的function，第三个参数侦听器里面用到的，第四个参数是开始的时候不立即执行
       watchers[key] = new Watcher(
         vm,
         getter || noop,
@@ -221,7 +226,10 @@ function initComputed (vm: Component, computed: Object) {
     // component-defined computed properties are already defined on the
     // component prototype. We only need to define computed properties defined
     // at instantiation here.
+    // 如果vm上没有当前计算属性的名字，则在vm上定义该计算属性，否则如果是开发环境发送警告
+    // 在初始化计算属性的时候，已经初始化了props，datas，methods，如果上面有key就已经发生了冲突
     if (!(key in vm)) {
+      // 没有就执行这个函数，并把vue实例，key和值都传进去
       defineComputed(vm, key, userDef)
     } else if (process.env.NODE_ENV !== 'production') {
       if (key in vm.$data) {
@@ -233,13 +241,17 @@ function initComputed (vm: Component, computed: Object) {
   }
 }
 
+// 把计算属性定义到vue的实例上
 export function defineComputed (
   target: any,
   key: string,
   userDef: Object | Function
 ) {
+  // 如果不是服务端渲染的环境，应该就是去缓存的
   const shouldCache = !isServerRendering()
+  // 判断用户传入的是对象还是function，用于去设置当前属性的描述符，get和set的值
   if (typeof userDef === 'function') {
+    // 核心函数
     sharedPropertyDefinition.get = shouldCache
       ? createComputedGetter(key)
       : createGetterInvoker(userDef)
@@ -261,13 +273,36 @@ export function defineComputed (
       )
     }
   }
+  // 给vue实例增加计算属性的名字
   Object.defineProperty(target, key, sharedPropertyDefinition)
 }
 
 function createComputedGetter (key) {
   return function computedGetter () {
+    // 获取该计算属性对应的watcher对象
     const watcher = this._computedWatchers && this._computedWatchers[key]
     if (watcher) {
+      // 这个位置起到缓存的作用
+      // 第一次访问计算属性的时候，dirty为true执行evaluate获取计算属性的值，并把dirty设为false，
+      /**
+       *   evaluate () {
+            this.value = this.get()
+            this.dirty = false
+          }
+       */
+      // 当再次访问计算属性，没有发生变化，dirty的值如果依然为false，不执行evaluate，直接返回watcher.value
+      // 当数据改变之后会调用 watcher 的 update 方法，把dirty改变为true，下次访问就会访问新的值
+      /**
+       * update () {
+            if (this.lazy) {
+              this.dirty = true
+            } else if (this.sync) {
+              this.run()
+            } else {
+              queueWatcher(this)
+            }
+          }
+       */
       if (watcher.dirty) {
         watcher.evaluate()
       }
@@ -390,7 +425,7 @@ export function stateMixin (Vue: Class<Component>) {
   Vue.prototype.$set = set
   Vue.prototype.$delete = del
 
-  //原型上挂载了$watch,监视数据的变化
+  //原型上挂载了$watch,监视数据的变化，和在选项中配置watch是一样的
   Vue.prototype.$watch = function (
     expOrFn: string | Function,
     cb: any,
@@ -404,9 +439,10 @@ export function stateMixin (Vue: Class<Component>) {
     }
     // 把当前watch的属性赋值，如果没有赋值空对象
     options = options || {}
-    // 标记为用户watcher
+    // 标记为用户watcher，侦听器
     options.user = true
-    // 创建用户watcher对象
+    // 创建用户watcher对象，expOrFn是侦听器的名字，即监听的属性，cb就是handler
+    // options里面传的就是deep和immediate
     const watcher = new Watcher(vm, expOrFn, cb, options)
     // 判断选项中是否要立即执行
     if (options.immediate) {

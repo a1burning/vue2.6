@@ -7,12 +7,14 @@ import { extend, warn, isObject } from 'core/util/index'
  */
 export function renderSlot (
   name: string,
+  // vnode数组
   fallback: ?Array<VNode>,
   props: ?Object,
   bindObject: ?Object
 ): ?Array<VNode> {
   const scopedSlotFn = this.$scopedSlots[name]
   let nodes
+  // 作用域插槽
   if (scopedSlotFn) { // scoped slot
     props = props || {}
     if (bindObject) {
@@ -26,6 +28,7 @@ export function renderSlot (
     }
     nodes = scopedSlotFn(props) || fallback
   } else {
+    // 根据插槽的名字获取值，如果没有值就使用fallback，fallback的值就是slot定义时候的默认值
     nodes = this.$slots[name] || fallback
   }
 

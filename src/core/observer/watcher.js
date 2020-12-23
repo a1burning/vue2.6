@@ -83,6 +83,7 @@ export default class Watcher {
     this.id = ++uid // uid for batching
     // 标识当前watcher是否是活动的
     this.active = true
+    // 开始让lazy的值给dirty
     this.dirty = this.lazy // for lazy watchers
     // 记录与watcher相关的dep对象
     this.deps = []
