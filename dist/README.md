@@ -1,3 +1,5 @@
+## Hello Vue~
+Test,you know~
 ## Explanation of Build Files
 
 | | UMD | CommonJS | ES Module |
